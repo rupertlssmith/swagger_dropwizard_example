@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.thesett.accounts.model">
+  <typedef class="com.thesett.accounts.dao.usertype.AccountTypeUserType" name="accountType_enumeration"/>
+
+  <typedef class="com.thesett.accounts.dao.usertype.EntryStatusTypeUserType" name="entryStatusType_enumeration"/>
+
+  <typedef class="com.thesett.accounts.dao.usertype.CurrenciesTypeUserType" name="currenciesType_enumeration"/>
+
+  <typedef class="com.thesett.accounts.dao.usertype.PartyTypeUserType" name="partyType_enumeration"/>
+
+  <typedef class="com.thesett.accounts.dao.usertype.TaxSourceTypeUserType" name="taxSourceType_enumeration"/>
+
+  <typedef class="com.thesett.accounts.dao.usertype.TaxAccountingTypeUserType" name="taxAccountingType_enumeration"/>
+
+  <typedef class="org.jadira.usertype.dateandtime.joda.PersistentLocalDate" name="date_only"/>
+  <typedef class="com.thesett.catalogue.customtypes.TimeOnlyUserType" name="time_only"/>
+  <typedef class="org.jadira.usertype.dateandtime.joda.PersistentDateTime" name="timestamp"/>
+  <class name="AccountType" table="accountType_enumeration" lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="assigned"/>
+    </id>
+    <property name="accountType" column="accountType" type="accountType_enumeration"/>
+  </class>
+
+  <class name="EntryStatusType" table="entryStatusType_enumeration" lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="assigned"/>
+    </id>
+    <property name="entryStatusType" column="entryStatusType" type="entryStatusType_enumeration"/>
+  </class>
+
+  <class name="CurrenciesType" table="currenciesType_enumeration" lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="assigned"/>
+    </id>
+    <property name="currenciesType" column="currenciesType" type="currenciesType_enumeration"/>
+  </class>
+
+  <class name="PartyType" table="partyType_enumeration" lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="assigned"/>
+    </id>
+    <property name="partyType" column="partyType" type="partyType_enumeration"/>
+  </class>
+
+  <class name="TaxSourceType" table="taxSourceType_enumeration" lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="assigned"/>
+    </id>
+    <property name="taxSourceType" column="taxSourceType" type="taxSourceType_enumeration"/>
+  </class>
+
+  <class name="TaxAccountingType" table="taxAccountingType_enumeration" lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="assigned"/>
+    </id>
+    <property name="taxAccountingType" column="taxAccountingType" type="taxAccountingType_enumeration"/>
+  </class>
+
+  <class name="Account" table="account"  lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="native"/>
+    </id>
+    <property name="name" column="name" type="text"/>
+
+    <!--REL: parentAccount -> Account:parentAccount Many-One account_account owner bi-->
+    <many-to-one name="parentAccount" column="parentAccount_id" lazy="proxy" />
+
+
+
+    <property name="description" column="description" type="text"/>
+    <many-to-one name="type" column="type_id" not-null="false" lazy="false"/>
+    <property name="balance" column="balance" type="big_decimal" precision="19" scale="4"/>
+
+    <!--REL: entries -> Entry:account One-Many account_entry  bi-->
+    <list name="entries" table="account_entry" inverse="true">
+      <key column="account_id"/>
+      <list-index column="entries_index"/>
+      <one-to-many class="Entry"/>
+    </list>  
+        
+
+
+
+    <!--REL: taxTableEntries -> TaxTableEntry:account One-Many account_taxTableEntry  bi-->
+    <set name="taxTableEntries" table="account_taxTableEntry" inverse="true">
+      <key column="account_id"/>
+      <one-to-many class="TaxTableEntry"/>
+    </set>  
+        
+
+
+  </class>
+
+  <class name="Entry" table="entry"  lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="native"/>
+    </id>
+    <!--REL: account -> Account:entries Many-One account_entry owner bi-->
+    <many-to-one name="account" column="account_id" lazy="proxy" />
+
+
+
+    <property name="amount" column="amount" type="big_decimal" precision="19" scale="4"/>
+    <many-to-one name="status" column="status_id" not-null="false" lazy="false"/>
+
+    <!--REL: taxEntries -> TaxEntry:entry One-Many entry_taxEntry  bi-->
+    <set name="taxEntries" table="entry_taxEntry" inverse="true">
+      <key column="entry_id"/>
+      <one-to-many class="TaxEntry"/>
+    </set>  
+        
+
+
+  </class>
+
+  <class name="BasicTransaction" table="basicTransaction"  lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="native"/>
+    </id>
+    <property name="description" column="description" type="text"/>
+
+    <!--REL: entries -> Entry: Many-Many basicTransaction_entry owner uni-->
+    <list name="entries" table="basicTransaction_entry" cascade="all" lazy="false">
+      <key column="basicTransaction_id"/>
+      <list-index column="entries_index"/>
+      <many-to-many column="entry_id" class="Entry"/>
+    </list>
+
+
+
+    <property name="date" column="date" type="date_only"/>
+
+    <!--REL: invoice -> Invoice:payment One-One invoice_basicTransaction  bi-->
+    <one-to-one name="invoice" property-ref="payment" lazy="proxy" />
+
+
+
+  </class>
+
+  <class name="Party" table="party"  lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="native"/>
+    </id>
+    <property name="name" column="name" type="text"/>
+
+    <component name="address">
+      <property name="building" column="addressBuilding" type="text"/>
+      <property name="street" column="addressStreet" type="text"/>
+      <property name="town" column="addressTown" type="text"/>
+      <property name="county" column="addressCounty" type="text"/>
+      <property name="country" column="addressCountry" type="text"/>
+      <property name="postCode" column="addressPostCode" type="text"/>
+    </component>
+
+    <many-to-one name="type" column="type_id" not-null="false" lazy="false"/>
+
+    <!--REL: invoices -> Invoice:party One-Many party_invoice  bi-->
+    <list name="invoices" table="party_invoice" inverse="true">
+      <key column="party_id"/>
+      <list-index column="invoices_index"/>
+      <one-to-many class="Invoice"/>
+    </list>  
+        
+
+
+  </class>
+
+  <class name="Invoice" table="invoice"  lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="native"/>
+    </id>
+    <property name="description" column="description" type="text"/>
+    <property name="invoiceNumber" column="invoiceNumber" type="int"/>
+
+    <!--REL: entries -> Entry: Many-Many invoice_entry owner uni-->
+    <list name="entries" table="invoice_entry" cascade="all" lazy="false">
+      <key column="invoice_id"/>
+      <list-index column="entries_index"/>
+      <many-to-many column="entry_id" class="Entry"/>
+    </list>
+
+
+
+
+    <!--REL: taxEntries -> TaxEntry: Many-Many invoice_taxEntry owner uni-->
+    <list name="taxEntries" table="invoice_taxEntry" cascade="all" lazy="false">
+      <key column="invoice_id"/>
+      <list-index column="taxEntries_index"/>
+      <many-to-many column="taxEntry_id" class="TaxEntry"/>
+    </list>
+
+
+
+    <property name="date" column="date" type="date_only"/>
+    <property name="dueDate" column="due_date" type="date_only"/>
+
+    <!--REL: postingEntry -> Entry: Many-One invoice_entry owner uni-->
+    <many-to-one name="postingEntry" column="postingEntry_id" lazy="false" cascade="all" />
+
+
+
+
+    <!--REL: payment -> BasicTransaction:invoice One-One invoice_basicTransaction owner bi-->
+    <many-to-one name="payment" column="payment_id" unique="true" lazy="proxy" />
+
+
+
+
+    <!--REL: party -> Party:invoices Many-One party_invoice owner bi-->
+    <many-to-one name="party" column="party_id" lazy="proxy" />
+
+
+
+  </class>
+
+  <class name="TaxEntry" table="taxEntry"  lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="native"/>
+    </id>
+    <!--REL: entry -> Entry:taxEntries Many-One entry_taxEntry owner bi-->
+    <many-to-one name="entry" column="entry_id" lazy="proxy" />
+
+
+
+
+    <!--REL: taxEntry -> TaxTableEntry:taxEntries Many-One taxTableEntry_taxEntry owner bi-->
+    <many-to-one name="taxEntry" column="taxEntry_id" lazy="proxy" />
+
+
+
+  </class>
+
+  <class name="TaxTable" table="taxTable"  lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="native"/>
+    </id>
+    <property name="name" column="name" type="text"/>
+
+    <!--REL: rows -> TaxTableRow: Many-Many taxTable_taxTableRow owner uni-->
+    <list name="rows" table="taxTable_taxTableRow" cascade="all" lazy="false">
+      <key column="taxTable_id"/>
+      <list-index column="rows_index"/>
+      <many-to-many column="taxTableRow_id" class="TaxTableRow"/>
+    </list>
+
+
+
+  </class>
+
+  <class name="TaxTableRow" table="taxTableRow"  lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="native"/>
+    </id>
+    <!--REL: entries -> TaxTableEntry: Many-Many taxTableRow_taxTableEntry owner uni-->
+    <list name="entries" table="taxTableRow_taxTableEntry" cascade="all" lazy="false">
+      <key column="taxTableRow_id"/>
+      <list-index column="entries_index"/>
+      <many-to-many column="taxTableEntry_id" class="TaxTableEntry"/>
+    </list>
+
+
+
+  </class>
+
+  <class name="TaxTableEntry" table="taxTableEntry"  lazy="true">
+    <id name="id" column="id" type="long">
+      <generator class="native"/>
+    </id>
+    <property name="amount" column="amount" type="big_decimal" precision="6" scale="4"/>
+    <many-to-one name="sourceType" column="sourceType_id" not-null="false" lazy="false"/>
+    <many-to-one name="accountingType" column="accountingType_id" not-null="false" lazy="false"/>
+
+    <!--REL: account -> Account:taxTableEntries Many-One account_taxTableEntry owner bi-->
+    <many-to-one name="account" column="account_id" lazy="proxy" />
+
+
+
+
+    <!--REL: taxEntries -> TaxEntry:taxEntry One-Many taxTableEntry_taxEntry  bi-->
+    <set name="taxEntries" table="taxTableEntry_taxEntry" inverse="true">
+      <key column="taxTableEntry_id"/>
+      <one-to-many class="TaxEntry"/>
+    </set>  
+        
+
+
+  </class>
+
+  <class name="com.thesett.catalogue.model.ExternalId" table="external_id">
+    <id name="id" type="string">
+      <column name="id" sql-type="char(32)" not-null="false"/>
+      <generator class="uuid.hex"/>
+    </id>
+    <property name="resource" type="string"/>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,240 @@
+<constraint-mappings
+    version="1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping validation-mapping-1.1.xsd"
+    xmlns="http://jboss.org/xml/ns/javax/validation/mapping">
+
+    <default-package>com.thesett.accounts.model</default-package>
+
+    <bean class="AccountType" ignore-annotations="true">
+        <field name="accountType">
+            <constraint annotation="com.thesett.aima.attribute.validation.ValidEnum">
+                <element name="value">accountType</element>
+            </constraint>
+        </field>    
+    </bean>
+
+
+    <bean class="EntryStatusType" ignore-annotations="true">
+        <field name="entryStatusType">
+            <constraint annotation="com.thesett.aima.attribute.validation.ValidEnum">
+                <element name="value">entryStatusType</element>
+            </constraint>
+        </field>    
+    </bean>
+
+
+    <bean class="CurrenciesType" ignore-annotations="true">
+        <field name="currenciesType">
+            <constraint annotation="com.thesett.aima.attribute.validation.ValidEnum">
+                <element name="value">currenciesType</element>
+            </constraint>
+        </field>    
+    </bean>
+
+
+    <bean class="PartyType" ignore-annotations="true">
+        <field name="partyType">
+            <constraint annotation="com.thesett.aima.attribute.validation.ValidEnum">
+                <element name="value">partyType</element>
+            </constraint>
+        </field>    
+    </bean>
+
+
+    <bean class="TaxSourceType" ignore-annotations="true">
+        <field name="taxSourceType">
+            <constraint annotation="com.thesett.aima.attribute.validation.ValidEnum">
+                <element name="value">taxSourceType</element>
+            </constraint>
+        </field>    
+    </bean>
+
+
+    <bean class="TaxAccountingType" ignore-annotations="true">
+        <field name="taxAccountingType">
+            <constraint annotation="com.thesett.aima.attribute.validation.ValidEnum">
+                <element name="value">taxAccountingType</element>
+            </constraint>
+        </field>    
+    </bean>
+
+
+    <bean class="Address" ignore-annotations="true">
+        <field name="building">
+            <valid/>
+        </field>
+        <field name="street">
+            <valid/>
+        </field>
+        <field name="town">
+            <valid/>
+        </field>
+        <field name="county">
+            <valid/>
+        </field>
+        <field name="country">
+            <valid/>
+        </field>
+        <field name="postCode">
+            <valid/>
+        </field>
+    </bean>
+
+
+    <bean class="Account" ignore-annotations="true">
+        <field name="name">
+            <valid/>
+        </field>
+        <field name="parentAccount">
+            <valid/>
+        </field>
+        <field name="description">
+            <valid/>
+        </field>
+        <field name="type">
+            <valid/>
+        </field>    
+        <field name="balance">
+            <valid/>
+        </field>
+        <field name="entries">
+            <valid/>
+        </field>
+        <field name="taxTableEntries">
+            <valid/>
+        </field>
+    </bean>
+
+
+    <bean class="Entry" ignore-annotations="true">
+        <field name="account">
+            <valid/>
+        </field>
+        <field name="amount">
+            <valid/>
+        </field>
+        <field name="status">
+            <valid/>
+        </field>    
+        <field name="taxEntries">
+            <valid/>
+        </field>
+    </bean>
+
+
+    <bean class="BasicTransaction" ignore-annotations="true">
+        <field name="description">
+            <valid/>
+        </field>
+        <field name="entries">
+            <valid/>
+        </field>
+        <field name="date">
+            <valid/>
+        </field>
+        <field name="invoice">
+            <valid/>
+        </field>
+    </bean>
+
+
+    <bean class="Party" ignore-annotations="true">
+        <field name="name">
+            <valid/>
+        </field>
+        <field name="address">
+            <valid/>
+        </field>
+        <field name="type">
+            <valid/>
+        </field>    
+        <field name="invoices">
+            <valid/>
+        </field>
+    </bean>
+
+
+    <bean class="Invoice" ignore-annotations="true">
+        <field name="description">
+            <valid/>
+        </field>
+        <field name="invoiceNumber">
+            <valid/>
+        </field>
+        <field name="entries">
+            <valid/>
+        </field>
+        <field name="taxEntries">
+            <valid/>
+        </field>
+        <field name="date">
+            <valid/>
+        </field>
+        <field name="dueDate">
+            <valid/>
+        </field>
+        <field name="postingEntry">
+            <valid/>
+        </field>
+        <field name="payment">
+            <valid/>
+        </field>
+        <field name="party">
+            <valid/>
+        </field>
+    </bean>
+
+
+    <bean class="TaxEntry" ignore-annotations="true">
+        <field name="entry">
+            <valid/>
+        </field>
+        <field name="taxEntry">
+            <valid/>
+        </field>
+    </bean>
+
+
+    <bean class="TaxTable" ignore-annotations="true">
+        <field name="name">
+            <valid/>
+        </field>
+        <field name="rows">
+            <valid/>
+        </field>
+    </bean>
+
+
+    <bean class="TaxTableRow" ignore-annotations="true">
+        <field name="entries">
+            <valid/>
+        </field>
+    </bean>
+
+
+    <bean class="TaxTableEntry" ignore-annotations="true">
+        <field name="amount">
+            <constraint annotation="javax.validation.constraints.DecimalMin">
+                <element name="value">0</element>
+            </constraint>
+            <constraint annotation="javax.validation.constraints.DecimalMax">
+                <element name="value">100</element>
+            </constraint>
+        </field>
+        <field name="sourceType">
+            <valid/>
+        </field>    
+        <field name="accountingType">
+            <valid/>
+        </field>    
+        <field name="account">
+            <valid/>
+        </field>
+        <field name="taxEntries">
+            <valid/>
+        </field>
+    </bean>
+
+
+</constraint-mappings>

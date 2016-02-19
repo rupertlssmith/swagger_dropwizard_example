@@ -1,0 +1,245 @@
+<!-- Defines the content catalogue for The Cookery Book website. -->
+<CatalogueDefinition xmlns="http://thesett.com/catalogue-def-0.2"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                     xsi:schemaLocation="http://thesett.com/catalogue-def-0.2">
+    
+    <Package name="com.thesett.accounts.model"/>
+
+    <Decimal name="money" precision="19" scale="4"/>
+    <Decimal name="percent" precision="6" scale="4" from="0" to="100"/>
+    
+    <!-- Defines the possible types of account. -->
+    <EnumerationDef name="accountType"/>
+
+    <!-- Defines the possible states of an entry. -->
+    <EnumerationDef name="entryStatusType"/>
+
+    <!-- Currencies. -->
+    <EnumerationDef name="currenciesType"/>
+
+    <!-- Defines the possible types of third parties to which the accounts can relate. -->
+    <EnumerationDef name="partyType"/>
+
+    <!--
+        Defines the possible types of tax table entries.
+        'added' is for taxes that are added to invoices. When the business recieves an invoice with an added
+        tax, it must pay that tax to the issuer of the invoice. When the business sends an invoice with an
+        added tax, it expects the receiving party to pay that tax to the business and for the business to
+        take responsibility for the tax. The tax will be posted to the primary account for the tax table entry.
+        Sales tax is usually dealt with in this way.
+        'deducted' is for taxes that are deducted at source, though the expense of the tax is carried by the
+        receiver of the invoice. When the business receives an invoice with a deducted tax, it does not need
+        to pay that tax to the issuer of the invoice, but does become liable for the paying the tax, so deducts
+        it from the value of the invoice before paying it. The tax will be posted to the primary account for
+        the tax table entry. Income tax, in a PAYE system, is usually dealt with in this way.
+        'associated' is for taxes that are added to invoices, and arise as a consequence of making a payment
+        to a party. The expense of the tax is carried by the issuer of the invoice, and the reciever of the
+        invoice does not need to pay it. An associated tax entry will have an expense account associated with
+        it. The tax is posted as a liability to the primary account for the tax table entry, and as an expense
+        to the secondary account. Employers national insurance contributions are usually dealt with in this way.
+        The associated tax category is split into 'liability' and 'expense', corresponding to the two different
+        entries involved.
+    -->
+    <EnumerationDef name="taxSourceType"/>
+
+    <!--
+        Defines the possible types of tax accounting for tax entries. 'normal' is for taxes that become liable
+        or recoverable immediately when an invoice is posted, 'cash' is for cash accounting, where taxes are
+        deffered until invoices are actually paid.
+    -->
+    <EnumerationDef name="taxAccountingType"/>
+
+    <!-- For providing references to records (also used for simple summary queries) -->
+    <ViewDef name="namedRef">
+        <String name="name"/>
+    </ViewDef>
+    
+    <!--
+        An 'account' is a named entity. Accounts exist in a hierarchy of accounts, where each account may have
+        a set of child accounts, and each account may have a single aggregating parent account. Accounts with
+        child accounts may be aggregating only, in which case entries cannot be posted directly against that
+        account.
+    -->
+    <EntityDef name="account">
+        <!-- Within each parent account grouping, only one account is permitted with a given name. -->
+        <Unique natural_key="true">
+            <String name="name"/>
+            <Component name="parentAccount" type="account" owner="true"/>
+        </Unique>
+        
+        <String name="description"/>
+        <Enumeration name="type" type="accountType"/>
+        <Real name="balance" type="money"/>
+        
+        <!-- All entries in this account. -->
+        <List name="entries">
+            <Component name="entry" type="entry"/>
+        </List>
+        
+        <!-- All tax table entries that apply to this account. -->
+        <Set name="taxTableEntries">
+            <Component name="taxTableEntry" type="taxTableEntry"/>
+        </Set>
+    </EntityDef>
+
+    <!--
+        An 'entry' is a delta against an account that alters the accounts balance.
+    -->
+    <EntityDef name="entry">
+        <Component name="account" type="account"/>
+        <Real name="amount" type="money"/>
+        <Enumeration name="status" type="entryStatusType"/>
+        <!-- Optional tax entries for this entry, if it was taxed. -->
+        <Set name="taxEntries">
+            <Component name="taxEntry" type="taxEntry"/>
+        </Set>
+    </EntityDef>
+
+    <!--
+        A 'transaction' is a set of entries against accounts at a particular moment in time, recorded in a
+        timestamp. To be valid a transaction must be against at least two accounts, and the total delta over
+        all entries in the transaction must balance to zero.
+    -->
+    <ViewDef name="transaction">
+        <String name="description"/>
+        <List name="entries">
+            <Component name="entry" type="entry"/>
+        </List>
+        <Date name="date"/>
+    </ViewDef>
+
+    <!--
+        A 'taxed transaction' is a transaction that includes taxes. The tax entries are kept in a seperate list
+        in order to provide an audit trail between the entries and the tax table entries that were used to
+        calculate them.
+    -->
+    <ViewDef name="taxedTransaction">
+        <List name="taxEntries">
+            <Component name="taxEntry" type="taxEntry"/>
+        </List>
+    </ViewDef>
+
+    <!--
+        A 'payable' is the first of a two part sequence of transactions that sets up an entry against a payable
+        or receivable account requiring a second payment transaction to complete the sequence. An example of a
+        'payable' is an invoice.
+    -->
+    <ViewDef name="payable">
+        <!-- The posting entry is listed under the transaction view, but is referenced a second time here so
+             that it can be located. -->
+        <!--<Component name="postingEntry" type="entry"/>-->
+
+        <!-- An invoice holds a link to its payment transaction. -->
+        <Component name="payment" type="basicTransaction"/>
+    </ViewDef>
+
+    <!--
+        A basic transaction is a transaction over multiple accounts.
+    -->
+    <EntityDef name="basicTransaction">
+        <View type="transaction"/>
+
+        <String name="description"/>
+        <List name="entries">
+            <Component name="entry" type="entry"/>
+        </List>
+        <Date name="date"/>
+        <!-- An optional link bank to the invoice that this transaction is payment of. -->
+        <Component name="invoice" type="invoice"/>
+    </EntityDef>
+
+    <!-- Customers. -->
+    <EntityDef name="party">
+        <String name ="name"/>
+        <Component name="address" type="address"/>
+        <Enumeration name="type" type="partyType"/>
+        <List name="invoices">
+            <Component name="invoices" type="invoice"/>
+        </List>
+    </EntityDef>
+
+    <!-- Addresses. -->
+    <ComponentDef name="address">
+        <String name="building"/>
+        <String name="street"/>
+        <String name="town"/>
+        <String name="county"/>
+        <String name="country"/>
+        <String name="post_code"/>
+    </ComponentDef>
+    
+    <!--
+        An invoice is a transaction over multiple accounts, usually either an income or expense accounts
+        depending on whether or not the invoice is for a sale or purchase. Tax accounts may also included
+        in the transaction. An invoice may be a degenerate transaction in that its entries do not have to
+        balance. It is balanced by posting it against a receivable or payable account.
+    -->
+    <EntityDef name="invoice">
+        <View type="transaction"/>
+        <View type="taxedTransaction"/>
+        <View type="payable"/>
+
+        <String name="description"/>
+        <Integer name="invoiceNumber"/>
+
+        <List name="entries">
+            <Component name="entry" type="entry"/>
+        </List>
+
+        <List name="taxEntries">
+            <Component name="taxEntry" type="taxEntry"/>
+        </List>
+
+        <Date name="date"/>
+        <Date name="due_date"/>
+
+        <!-- The posting entry is listed under the transaction view, but is referenced a second time here so
+             that it can be located. -->
+        <Component name="postingEntry" type="entry"/>
+
+        <!-- An invoice holds a link to its payment transaction. -->
+        <Component name="payment" type="basicTransaction" owner="true"/>
+
+        <Component name="party" type="party"/>
+    </EntityDef>
+
+    <!-- Defines tax related entries in an invoice. -->
+    <EntityDef name="taxEntry">
+        <Component name="entry" type="entry"/>
+        <Component name="taxEntry" type="taxTableEntry"/>
+    </EntityDef>
+
+    <!-- A tax table provides a way of calculating tax liabilities against invoices. -->
+    <EntityDef name="taxTable">
+        <String name="name"/>
+        <List name="rows">
+            <Component name="entry" type="taxTableRow"/>
+        </List>
+    </EntityDef>
+
+    <!-- A tax table row consists of many tax table entries providing the total tax against a taxable item. -->
+    <EntityDef name="taxTableRow">
+        <List name="entries">
+            <Component name="entry" type="taxTableEntry"/>
+        </List>
+    </EntityDef>
+
+    <!--
+        An 'taxTableEntry' is a percentage delta against an account that determines the value of entries to
+        be posted to that account against taxable items.
+        Items marked 'posted' are posted when taxable items are invoiced.
+        Items marked 'unposted' are posted when invoices are paid.
+    -->
+    <EntityDef name="taxTableEntry">
+        <Real name="amount" type="percent"/>
+        <Enumeration name="sourceType" type="taxSourceType"/>
+        <Enumeration name="accountingType" type="taxAccountingType"/>
+        <!-- Account to post the tax to. -->
+        <Component name="account" type="account"/>
+        <!-- Tax entries that have been created by this tax. -->
+        <Set name="taxEntries">
+            <Component name="taxEntry" type="taxEntry"/>
+        </Set>
+    </EntityDef>
+
+</CatalogueDefinition>

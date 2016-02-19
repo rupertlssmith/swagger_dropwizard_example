@@ -1,0 +1,11 @@
+#!/bin/bash
+
+psql -c "DROP DATABASE IF EXISTS accountsdb"
+psql -c "DROP USER IF EXISTS accountsdb"
+psql -c "CREATE USER accountsdb WITH PASSWORD 'accountsdb'"
+psql -c "CREATE DATABASE accountsdb"
+psql -c "GRANT ALL PRIVILEGES ON DATABASE accountsdb TO accountsdb"
+
+java -jar top/target/accounts_top-1.0-SNAPSHOT.jar db drop-all --confirm-delete-everything top/src/main/resources/config.yml
+java -jar top/target/accounts_top-1.0-SNAPSHOT.jar db migrate top/src/main/resources/config.yml
+java -jar top/target/accounts_top-1.0-SNAPSHOT.jar refdata top/src/main/resources/config.yml
