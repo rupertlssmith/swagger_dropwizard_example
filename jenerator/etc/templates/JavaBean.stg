@@ -582,12 +582,12 @@ import com.thesett.util.equality.EqualityHelper;
  * Generated bean from catalogue model.<if(decorator.naturalKeyFieldTypes)>
     
  *
- * \<p/>Equality (and hashCode) is based on the following fields:
+ * \<p>Equality (and hashCode) is based on the following fields:
  *
- * \<pre>\<p/>\<table id="equality">\<caption>Equality Fields\</caption>
+ * \<table id="equality">\<caption>Equality Fields\</caption>
  * \<tr>\<th> Field Name \</th>\</tr>
-<decorator.naturalKeyFieldTypes.keys:{it| * \<tr>\<td> <it; format="cc"> \</tr>\</td>}; separator="\n">
- * \</table>\</pre><endif>    
+<decorator.naturalKeyFieldTypes.keys:{it| * \<tr>\<td> <it; format="cc"> \</td>\</tr>}; separator="\n">
+ * \</table><endif>    
  *
  * @author Generated Code
  */

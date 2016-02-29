@@ -22,13 +22,13 @@ import com.thesett.util.equality.EqualityHelper;
  * Generated bean from catalogue model.
 
  *
- * <p/>Equality (and hashCode) is based on the following fields:
+ * <p>Equality (and hashCode) is based on the following fields:
  *
- * <pre><p/><table id="equality"><caption>Equality Fields</caption>
+ * <table id="equality"><caption>Equality Fields</caption>
  * <tr><th> Field Name </th></tr>
-* <tr><td> name </tr></td>
-* <tr><td> parentAccount </tr></td>
- * </table></pre>    
+* <tr><td> name </td></tr>
+* <tr><td> parentAccount </td></tr>
+ * </table>    
  *
  * @author Generated Code
  */

@@ -24,13 +24,13 @@ import com.thesett.accounts.config.AppConfiguration;
  * additional services created, additional databse mappings to be created, and example data to be 
  * inserted.
  *
- * <pre><p/><table id="crc"><caption>CRC Card</caption>
+ * <table id="crc"><caption>CRC Card</caption>
  * <tr><th> Responsibilities </th><th> Collaborations </th>
  * <tr><td> Bootstrap the DropWizard environment. </td></tr>
  * <tr><td> Add additional services. </td></tr>
  * <tr><td> Add additional Hibernate ORM mappings. </td></tr>
  * <tr><td> Create some example data. </td></tr>
- * </table></pre>
+ * </table>
  */
 public class Example {
     /**
