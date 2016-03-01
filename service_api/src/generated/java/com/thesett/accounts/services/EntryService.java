@@ -9,11 +9,20 @@ import com.thesett.util.validation.model.JsonSchema;
 
 import com.thesett.accounts.model.Entry;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
 /**
  * Service interface for working with Entry
  *
  * @author Generated Code
  */
+@Path("/api/entry/")        
+@Api("/api/entry/")        
 public interface EntryService extends CRUD<Entry, Long> {
     /**
      * Provides a root HAL for the service, describing its capabilities.
@@ -43,6 +52,8 @@ public interface EntryService extends CRUD<Entry, Long> {
      *
      * @return A list of all matching values.
      */
+    @POST        
+    @Path("/example")        
     List<Entry> findByExample(Entry example);
 
     /** {@inheritDoc} */

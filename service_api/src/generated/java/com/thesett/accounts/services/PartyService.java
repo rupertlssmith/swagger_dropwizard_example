@@ -9,11 +9,20 @@ import com.thesett.util.validation.model.JsonSchema;
 
 import com.thesett.accounts.model.Party;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
 /**
  * Service interface for working with Party
  *
  * @author Generated Code
  */
+@Path("/api/party/")        
+@Api("/api/party/")        
 public interface PartyService extends CRUD<Party, Long> {
     /**
      * Provides a root HAL for the service, describing its capabilities.
@@ -43,6 +52,8 @@ public interface PartyService extends CRUD<Party, Long> {
      *
      * @return A list of all matching values.
      */
+    @POST        
+    @Path("/example")        
     List<Party> findByExample(Party example);
 
     /** {@inheritDoc} */

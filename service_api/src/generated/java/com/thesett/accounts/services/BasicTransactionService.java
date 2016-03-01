@@ -9,11 +9,20 @@ import com.thesett.util.validation.model.JsonSchema;
 
 import com.thesett.accounts.model.BasicTransaction;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
 /**
  * Service interface for working with BasicTransaction
  *
  * @author Generated Code
  */
+@Path("/api/basicTransaction/")        
+@Api("/api/basicTransaction/")        
 public interface BasicTransactionService extends CRUD<BasicTransaction, Long> {
     /**
      * Provides a root HAL for the service, describing its capabilities.
@@ -43,6 +52,8 @@ public interface BasicTransactionService extends CRUD<BasicTransaction, Long> {
      *
      * @return A list of all matching values.
      */
+    @POST        
+    @Path("/example")        
     List<BasicTransaction> findByExample(BasicTransaction example);
 
     /** {@inheritDoc} */

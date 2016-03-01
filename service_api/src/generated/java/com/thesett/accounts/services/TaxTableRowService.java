@@ -9,11 +9,20 @@ import com.thesett.util.validation.model.JsonSchema;
 
 import com.thesett.accounts.model.TaxTableRow;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
 /**
  * Service interface for working with TaxTableRow
  *
  * @author Generated Code
  */
+@Path("/api/taxTableRow/")        
+@Api("/api/taxTableRow/")        
 public interface TaxTableRowService extends CRUD<TaxTableRow, Long> {
     /**
      * Provides a root HAL for the service, describing its capabilities.
@@ -43,6 +52,8 @@ public interface TaxTableRowService extends CRUD<TaxTableRow, Long> {
      *
      * @return A list of all matching values.
      */
+    @POST        
+    @Path("/example")        
     List<TaxTableRow> findByExample(TaxTableRow example);
 
     /** {@inheritDoc} */

@@ -9,11 +9,20 @@ import com.thesett.util.validation.model.JsonSchema;
 
 import com.thesett.accounts.model.Invoice;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
 /**
  * Service interface for working with Invoice
  *
  * @author Generated Code
  */
+@Path("/api/invoice/")        
+@Api("/api/invoice/")        
 public interface InvoiceService extends CRUD<Invoice, Long> {
     /**
      * Provides a root HAL for the service, describing its capabilities.
@@ -43,6 +52,8 @@ public interface InvoiceService extends CRUD<Invoice, Long> {
      *
      * @return A list of all matching values.
      */
+    @POST        
+    @Path("/example")        
     List<Invoice> findByExample(Invoice example);
 
     /** {@inheritDoc} */

@@ -48,12 +48,21 @@ import com.thesett.util.entity.CRUD;
 import com.thesett.util.validation.model.JsonSchema;
     
 import <catalogue.modelPackage>.<name; format="ccu">;
-             
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+                                     
 /**
  * Service interface for working with <name; format="ccu">
  *
  * @author Generated Code
  */
+@Path("/api/<name; format="cc">/")        
+@Api("/api/<name; format="cc">/")        
 public interface <name; format="ccu">Service extends CRUD\<<name; format="ccu">, Long> {
     /**
      * Provides a root HAL for the service, describing its capabilities.
@@ -83,6 +92,8 @@ public interface <name; format="ccu">Service extends CRUD\<<name; format="ccu">,
      *
      * @return A list of all matching values.
      */
+    @POST        
+    @Path("/example")        
     List\<<name; format="ccu">\> findByExample(<name; format="ccu"> example);
     
     /** {@inheritDoc} */
